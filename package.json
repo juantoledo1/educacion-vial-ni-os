@@ -1,0 +1,17 @@
+{
+  "name": "mi-proyecto-educacion-vial",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "astro": "^4.12.0",
+    "bootstrap": "^5.3.3"
+  }
+}

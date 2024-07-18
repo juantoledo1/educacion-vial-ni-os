@@ -1,0 +1,34 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Juegos - Educación Vial para Niños">
+  <h2>Juegos Educativos</h2>
+  
+  <div class="row mt-4">
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Juego de Memoria</h3>
+          <p class="card-text">Encuentra los pares de señales de tránsito iguales.</p>
+          <div id="juego-memoria" class="mb-3">
+            <!-- Aquí se generarán las cartas del juego -->
+          </div>
+          <button id="iniciar-juego" class="btn btn-primary">Iniciar Juego</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Trivia de Seguridad Vial</h3>
+          <p class="card-text">Responde preguntas sobre seguridad vial y aprende mientras juegas.</p>
+          <a href="#" class="btn btn-secondary">Próximamente</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script src="../scripts/juego-memoria.js"></script>
