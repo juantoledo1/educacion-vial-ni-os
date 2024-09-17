@@ -1,0 +1,152 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Trivia de Seguridad Vial">
+  <div class="trivia-wrapper">
+    <h2 class="text-center mb-4">Trivia de Seguridad Vial</h2>
+    <p class="lead text-center">Responde las preguntas y aprende sobre cómo estar seguro en las calles.</p>
+    
+    <div id="trivia-container" class="trivia-box">
+      <h3 id="pregunta" class="text-primary"></h3>
+      <div id="opciones" class="mt-3">
+        <!-- Aquí se mostrarán las opciones -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Script de trivia -->
+  <script type="text/javascript">
+    const todasLasPreguntas = [
+      { pregunta: "¿Qué debes hacer antes de cruzar la calle?", opciones: ["Mirar a ambos lados", "Correr rápido", "Usar el celular"], correcta: 0, explicacion: "Antes de cruzar la calle, siempre debes mirar a ambos lados para asegurarte de que no vengan vehículos." },
+      { pregunta: "¿Qué significa una luz roja en el semáforo?", opciones: ["Avanzar", "Detenerse", "Acelerar"], correcta: 1, explicacion: "La luz roja significa que debes detenerte. Espera a que la luz cambie a verde antes de continuar." },
+      { pregunta: "¿Qué debes hacer si vas en bicicleta y ves un semáforo en amarillo?", opciones: ["Acelerar", "Detenerse", "Seguir igual"], correcta: 1, explicacion: "Debes detenerte cuando el semáforo está en amarillo, significa que la luz roja está por encenderse." },
+      { pregunta: "¿Por dónde debes caminar si no hay vereda?", opciones: ["Por el medio de la calle", "Por la derecha de la calle", "Por la izquierda, de frente a los vehículos"], correcta: 2, explicacion: "Debes caminar por la izquierda, de frente al tránsito para poder ver los vehículos que se aproximan." },
+      { pregunta: "¿Qué significa la señal de 'Pare'?", opciones: ["Reducir la velocidad", "Detenerse por completo", "Seguir con precaución"], correcta: 1, explicacion: "La señal de 'Pare' indica que debes detenerte por completo y ceder el paso a otros vehículos o peatones." },
+      { pregunta: "¿Qué debes hacer si un vehículo está dando marcha atrás?", opciones: ["Esperar a que termine", "Caminar detrás de él", "Tocar la bocina"], correcta: 0, explicacion: "Es más seguro esperar a que el vehículo termine de dar marcha atrás antes de pasar." },
+      { pregunta: "¿Cuál es la mejor forma de cruzar una calle sin semáforo?", opciones: ["Cruzando en diagonal", "Cruzando en línea recta", "Cruzando corriendo"], correcta: 1, explicacion: "Debes cruzar en línea recta para minimizar el tiempo que estás en la calle." },
+      { pregunta: "¿Qué debes hacer si un semáforo está en amarillo intermitente?", opciones: ["Detenerte", "Proceder con precaución", "Acelerar"], correcta: 1, explicacion: "El amarillo intermitente indica que debes proceder con precaución." },
+      { pregunta: "¿Por qué es importante usar el cinturón de seguridad?", opciones: ["Te protege en caso de un accidente", "Evita que el auto se apague", "Es una norma de tránsito"], correcta: 0, explicacion: "El cinturón de seguridad te protege en caso de un accidente, evitando lesiones graves." },
+      { pregunta: "¿Qué significa una luz verde en el semáforo?", opciones: ["Detenerse", "Avanzar con precaución", "Acelerar al máximo"], correcta: 1, explicacion: "La luz verde significa que puedes avanzar, pero siempre con precaución." },
+      { pregunta: "¿Qué hacer si un peatón está cruzando por una esquina?", opciones: ["Esperar que cruce", "Tocar la bocina", "Seguir conduciendo"], correcta: 0, explicacion: "Debes esperar a que el peatón termine de cruzar antes de continuar." },
+      { pregunta: "¿Qué debes hacer si escuchas una sirena de emergencia?", opciones: ["Detenerte de inmediato", "Ceder el paso y detenerte", "Seguir conduciendo"], correcta: 1, explicacion: "Cede el paso a los vehículos de emergencia y detente si es necesario." },
+      { pregunta: "¿Por qué es peligroso usar el celular mientras caminas?", opciones: ["Porque gasta batería", "Porque no ves por dónde caminas", "Porque te hace más lento"], correcta: 1, explicacion: "Usar el celular mientras caminas te distrae y no te permite ver por dónde vas, lo que aumenta el riesgo de accidentes." },
+      { pregunta: "¿Qué indica una línea amarilla continua en la carretera?", opciones: ["Puedes adelantar", "No debes adelantar", "Debes detenerte"], correcta: 1, explicacion: "Una línea amarilla continua indica que no debes adelantar porque es peligroso." },
+      { pregunta: "¿Qué significa la señal de 'Ceda el paso'?", opciones: ["Debes acelerar", "Debes detenerte", "Debes reducir la velocidad y ceder el paso si es necesario"], correcta: 2, explicacion: "La señal de 'Ceda el paso' te indica que debes reducir la velocidad y ceder el paso si otros vehículos o peatones están cruzando." },
+      { pregunta: "¿Cuál es la distancia mínima que debes mantener con el vehículo de adelante?", opciones: ["La que te permita ver la matrícula", "La que te permita frenar a tiempo", "La que te permita acelerar rápido"], correcta: 1, explicacion: "Debes mantener una distancia que te permita frenar a tiempo en caso de emergencia." },
+      { pregunta: "¿Qué debes hacer si ves una señal de 'No estacionar'?", opciones: ["Estacionar rápidamente", "Buscar otro lugar para estacionar", "Esperar dentro del vehículo"], correcta: 1, explicacion: "La señal de 'No estacionar' indica que debes buscar otro lugar permitido para estacionar." },
+      { pregunta: "¿Qué hacer si un semáforo peatonal está en rojo?", opciones: ["Cruzar rápidamente", "Esperar a que cambie a verde", "Correr por la esquina"], correcta: 1, explicacion: "Debes esperar a que el semáforo peatonal cambie a verde antes de cruzar." },
+      { pregunta: "¿Qué debes hacer si un ciclista está en tu carril?", opciones: ["Tocar la bocina", "Acelerar para adelantar", "Reducir la velocidad y adelantar con precaución"], correcta: 2, explicacion: "Debes reducir la velocidad y adelantar al ciclista con precaución, dejando una distancia segura." },
+      { pregunta: "¿Qué significa la señal de 'Desvío'? ", opciones: ["Cambio de carril", "Cierre total de la carretera", "Cambio temporal de la ruta"], correcta: 2, explicacion: "La señal de 'Desvío' indica que debes tomar una ruta temporal debido a un cierre o cambio en la carretera." },
+    ];
+
+    let preguntas = [];
+    let preguntaActual = 0;
+    let puntaje = 0;
+
+    function seleccionarPreguntas() {
+      preguntas = [...todasLasPreguntas];
+      mezclarArray(preguntas);
+      preguntas = preguntas.slice(0, 10); // Seleccionar 10 preguntas
+    }
+
+    function mezclarArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function manejarRespuesta(opcionIndex) {
+      const esCorrecta = opcionIndex === preguntas[preguntaActual].correcta;
+
+      const toastMessage = esCorrecta
+        ? `¡Correcto! ${preguntas[preguntaActual].explicacion}`
+        : `Incorrecto. ${preguntas[preguntaActual].explicacion}`;
+
+      mostrarToast(toastMessage, esCorrecta ? 'bg-success' : 'bg-danger');
+
+      if (esCorrecta) {
+        puntaje++;
+      }
+
+      preguntaActual++;
+      if (preguntaActual < preguntas.length) {
+        mostrarPregunta();
+      } else {
+        mostrarResultados();
+      }
+    }
+
+    function mostrarPregunta() {
+  const pregunta = preguntas[preguntaActual];
+  document.getElementById('pregunta').innerText = pregunta.pregunta;
+  const opcionesDiv = document.getElementById('opciones');
+  opcionesDiv.innerHTML = '';
+  pregunta.opciones.forEach((opcion, index) => {
+    const button = document.createElement('button');
+    button.className = 'btn btn-primary d-block w-100 my-2';  // Aquí se agregan las clases d-block y w-100
+    button.innerText = opcion;
+    button.onclick = () => manejarRespuesta(index);
+    opcionesDiv.appendChild(button);
+  });
+}
+
+    function mostrarResultados() {
+      document.getElementById('pregunta').innerText = `Juego terminado. Tu puntaje es: ${puntaje} de 10`;
+      document.getElementById('opciones').innerHTML = `<button class="btn btn-warning" onclick="reiniciarJuego()">Reiniciar</button>`;
+    }
+
+    function reiniciarJuego() {
+      puntaje = 0;
+      preguntaActual = 0;
+      seleccionarPreguntas();
+      mostrarPregunta();
+    }
+
+    function mostrarToast(mensaje, estilo) {
+      const toastDiv = document.createElement('div');
+      toastDiv.className = `toast ${estilo} text-white`;
+      toastDiv.style.position = 'fixed';
+      toastDiv.style.bottom = '10px';
+      toastDiv.style.right = '10px';
+      toastDiv.style.zIndex = 1000;
+      toastDiv.innerHTML = `
+        <div class="toast-body">
+          ${mensaje}
+        </div>
+      `;
+      document.body.appendChild(toastDiv);
+
+      const toast = new bootstrap.Toast(toastDiv);
+      toast.show();
+
+      setTimeout(() => {
+        toastDiv.remove();
+      }, 5000);
+    }
+
+    // Inicializar el juego
+    seleccionarPreguntas();
+    mostrarPregunta();
+  </script>
+
+  <style>
+    .trivia-wrapper {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .trivia-box {
+      background-color: #99f1f4;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+  </style>
+</Layout>

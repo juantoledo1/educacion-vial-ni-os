@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Juego de Memoria - Educación Vial">
+  <h2 class="text-center my-4">Juego de Memoria</h2>
+  
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Encuentra los pares de señales de tránsito iguales</h3>
+            <div id="juego-memoria" class="mb-3">
+              <!-- Aquí se generarán las cartas del juego -->
+            </div>
+            <button id="iniciar-juego" class="btn btn-primary">Iniciar Juego</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script src="../scripts/juego-memoria.js"></script>
+
+<style>
+  .card {
+    border-radius: 0.5rem;
+    border: 2px solid #283b3d; /* Borde celeste suave */
+    background-color: #f9fcfc; /* Fondo blanco suave para el contenido */
+  }
+</style>

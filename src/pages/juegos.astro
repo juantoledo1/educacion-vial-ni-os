@@ -11,10 +11,8 @@ import Layout from '../layouts/Layout.astro';
         <div class="card-body">
           <h3 class="card-title">Juego de Memoria</h3>
           <p class="card-text">Encuentra los pares de señales de tránsito iguales.</p>
-          <div id="juego-memoria" class="mb-3">
-            <!-- Aquí se generarán las cartas del juego -->
-          </div>
-          <button id="iniciar-juego" class="btn btn-primary">Iniciar Juego</button>
+          <!-- Botón que dirige a la página del juego de memoria -->
+          <a href="/juego-memoria" class="btn btn-primary">Ir al Juego de Memoria</a>
         </div>
       </div>
     </div>
@@ -24,11 +22,24 @@ import Layout from '../layouts/Layout.astro';
         <div class="card-body">
           <h3 class="card-title">Trivia de Seguridad Vial</h3>
           <p class="card-text">Responde preguntas sobre seguridad vial y aprende mientras juegas.</p>
-          <a href="#" class="btn btn-secondary">Próximamente</a>
+          <!-- Botón que dirige a la página de trivia -->
+          <a href="/trivia" class="btn btn-primary">Ir a la Trivia</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nueva sección de videos educativos -->
+  <div class="row mt-4">
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Videos Educativos</h3>
+          <p class="card-text">Explora nuestros videos educativos sobre seguridad vial.</p>
+          <!-- Botón que dirige a la página de videos -->
+          <a href="/videos" class="btn btn-primary">Ver Videos</a>
         </div>
       </div>
     </div>
   </div>
 </Layout>
-
-<script src="../scripts/juego-memoria.js"></script>
