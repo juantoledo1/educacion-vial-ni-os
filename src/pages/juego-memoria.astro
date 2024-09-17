@@ -1,18 +1,18 @@
----
+--- 
 import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Juego de Memoria - Educación Vial">
   <h2 class="text-center my-4">Juego de Memoria</h2>
-  
+
   <div class="container">
     <div class="row">
       <div class="col-md-12 mb-4">
         <div class="card">
           <div class="card-body">
             <h3 class="card-title">Encuentra los pares de señales de tránsito iguales</h3>
-            <div id="juego-memoria" class="mb-3">
-              <!-- Aquí se generarán las cartas del juego -->
+            <div id="juego-memoria" class="row mb-3">
+              <!-- Aquí se generarán las cartas del juego dentro de un row de Bootstrap -->
             </div>
             <button id="iniciar-juego" class="btn btn-primary">Iniciar Juego</button>
           </div>
@@ -20,14 +20,171 @@ import Layout from '../layouts/Layout.astro';
       </div>
     </div>
   </div>
+
+  <!-- Contenedor de Toasts -->
+  <div id="toast-container" class="position-fixed bottom-0 end-0 p-3">
+    <!-- Aquí se mostrarán los toasts -->
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const juegoMemoria = document.getElementById('juego-memoria');
+      const iniciarJuegoBtn = document.getElementById('iniciar-juego');
+      const toastContainer = document.getElementById('toast-container');
+
+      const senales = [
+        { id: 1, imagen: '/images/senales/senal1.png' },
+        { id: 2, imagen: '/images/senales/senal2.png' },
+        { id: 3, imagen: '/images/senales/senal3.png' },
+        { id: 4, imagen: '/images/senales/senal4.png' },
+      ];
+
+      function mostrarToast(mensaje, tipo = 'info', grande = false) {
+        const toast = document.createElement('div');
+        toast.classList.add('toast', 'fade', 'show', `bg-${tipo}`);
+        if (grande) {
+          toast.classList.add('toast-grande');
+        }
+        toast.innerHTML = `
+          <div class="toast-body">
+            ${mensaje}
+          </div>
+        `;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), grande ? 5000 : 3000);
+      }
+
+      function crearTablero() {
+        const paresDeCartas = [...senales, ...senales];
+        paresDeCartas.sort(() => Math.random() - 0.5);
+
+        juegoMemoria.innerHTML = '';
+        paresDeCartas.forEach((senal) => {
+          const cartaCol = document.createElement('div');
+          cartaCol.classList.add('col-6', 'col-sm-4', 'col-md-3', 'mb-4'); // Bootstrap columns
+
+          const carta = document.createElement('div');
+          carta.classList.add('card', 'carta');
+          carta.dataset.id = String(senal.id); // Convertimos el id a string
+          
+          carta.innerHTML = `
+            <img src="${senal.imagen}" alt="Señal de tránsito" class="card-img-top d-none">
+            <div class="card-body p-2 text-center carta-reverso">?</div>
+          `;
+
+          carta.addEventListener('click', voltearCarta);
+          cartaCol.appendChild(carta);
+          juegoMemoria.appendChild(cartaCol);
+        });
+
+        mostrarToast('¡El juego ha comenzado! Encuentra todos los pares.', 'info');
+      }
+
+      let cartasVolteadas = [];
+      let paresEncontrados = 0;
+
+      function voltearCarta() {
+        if (cartasVolteadas.length < 2 && !this.classList.contains('encontrada')) {
+          this.querySelector('img').classList.remove('d-none');
+          this.querySelector('.carta-reverso').classList.add('d-none');
+          cartasVolteadas.push(this);
+
+          if (cartasVolteadas.length === 2) {
+            setTimeout(verificarPareja, 1000);
+          }
+        }
+      }
+
+      function verificarPareja() {
+        const [carta1, carta2] = cartasVolteadas;
+        if (carta1.dataset.id === carta2.dataset.id) {
+          carta1.classList.add('encontrada');
+          carta2.classList.add('encontrada');
+          paresEncontrados++;
+          mostrarToast('¡Correcto! ¡Sigue así! 🎉', 'success');
+          if (paresEncontrados === senales.length) {
+            mostrarToast('¡Felicidades! Has encontrado todos los pares. ¡Eres un campeón! 🏆', 'success', true);
+          }
+        } else {
+          carta1.querySelector('img').classList.add('d-none');
+          carta1.querySelector('.carta-reverso').classList.remove('d-none');
+          carta2.querySelector('img').classList.add('d-none');
+          carta2.querySelector('.carta-reverso').classList.remove('d-none');
+          mostrarToast('¡No es una pareja! Inténtalo de nuevo. 👍', 'warning');
+        }
+        cartasVolteadas = [];
+      }
+
+      iniciarJuegoBtn.addEventListener('click', crearTablero);
+    });
+  </script>
+
+  <style>
+    /* Estilo para las cartas */
+    .carta {
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .carta:hover {
+      transform: scale(1.05);
+    }
+
+    .carta img {
+      object-fit: cover;
+    }
+
+    .carta-reverso {
+      background-color: #283b3d;
+      color: white;
+      font-size: 2rem;
+      border-radius: 0.25rem;
+    }
+
+    /* Distribución responsiva con Bootstrap */
+    @media (max-width: 768px) {
+      .carta {
+        height: auto;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .carta {
+        height: 200px;
+      }
+    }
+
+    /* Estilo para los toasts */
+    .toast {
+      min-width: 200px;
+      max-width: 300px;
+      z-index: 1050; /* Asegúrate de que los toasts estén por encima de otros elementos */
+    }
+
+    .toast-body {
+      font-size: 1rem;
+      color: white;
+    }
+
+    .bg-success {
+      background-color: #28a745;
+    }
+
+    .bg-info {
+      background-color: #17a2b8;
+    }
+
+    .bg-danger {
+      background-color: #dc3545;
+    }
+
+    .bg-warning {
+      background-color: #ffc107;
+    }
+
+    /* Estilo para los toasts grandes */
+    .toast-grande .toast-body {
+      font-size: 1.5rem;
+    }
+  </style>
 </Layout>
-
-<script src="../scripts/juego-memoria.js"></script>
-
-<style>
-  .card {
-    border-radius: 0.5rem;
-    border: 2px solid #283b3d; /* Borde celeste suave */
-    background-color: #f9fcfc; /* Fondo blanco suave para el contenido */
-  }
-</style>
