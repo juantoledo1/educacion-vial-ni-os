@@ -1,20 +1,18 @@
---- 
+---
 import Layout from '../layouts/Layout.astro';
 ---
-
 <Layout title="Juego de Memoria - Educación Vial">
-  <h2 class="text-center my-4">Juego de Memoria</h2>
-
+  <h2 class="text-center my-4 text-primary">Juego de Memoria - Educación Vial</h2>
   <div class="container">
-    <div class="row">
-      <div class="col-md-12 mb-4">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="card-title">Encuentra los pares de señales de tránsito iguales</h3>
-            <div id="juego-memoria" class="row mb-3">
-              <!-- Aquí se generarán las cartas del juego dentro de un row de Bootstrap -->
+    <div class="row justify-content-center">
+      <div class="col-md-10 mb-4">
+        <div class="card shadow-lg">
+          <div class="card-body p-4">
+            <h3 class="card-title text-center mb-4">Encuentra los pares de señales de tránsito iguales</h3>
+            <div id="juego-memoria" class="row gy-4"></div>
+            <div class="d-grid mt-4">
+              <button id="iniciar-juego" class="btn btn-success btn-lg">Iniciar Juego</button>
             </div>
-            <button id="iniciar-juego" class="btn btn-primary">Iniciar Juego</button>
           </div>
         </div>
       </div>
@@ -22,9 +20,7 @@ import Layout from '../layouts/Layout.astro';
   </div>
 
   <!-- Contenedor de Toasts -->
-  <div id="toast-container" class="position-fixed bottom-0 end-0 p-3">
-    <!-- Aquí se mostrarán los toasts -->
-  </div>
+  <div id="toast-container" class="position-fixed bottom-0 end-0 p-3"></div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -39,6 +35,7 @@ import Layout from '../layouts/Layout.astro';
         { id: 4, imagen: '/images/senales/senal4.png' },
       ];
 
+      // Función para mostrar mensajes emergentes (toasts)
       function mostrarToast(mensaje, tipo = 'info', grande = false) {
         const toast = document.createElement('div');
         toast.classList.add('toast', 'fade', 'show', `bg-${tipo}`);
@@ -46,30 +43,34 @@ import Layout from '../layouts/Layout.astro';
           toast.classList.add('toast-grande');
         }
         toast.innerHTML = `
-          <div class="toast-body">
-            ${mensaje}
+          <div class="toast-body d-flex align-items-center justify-content-between">
+            <span>${mensaje}</span>
+            <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="toast"></button>
           </div>
         `;
         toastContainer.appendChild(toast);
         setTimeout(() => toast.remove(), grande ? 5000 : 3000);
       }
 
+      // Función para crear el tablero de juego
       function crearTablero() {
         const paresDeCartas = [...senales, ...senales];
         paresDeCartas.sort(() => Math.random() - 0.5);
-
         juegoMemoria.innerHTML = '';
+
         paresDeCartas.forEach((senal) => {
           const cartaCol = document.createElement('div');
-          cartaCol.classList.add('col-6', 'col-sm-4', 'col-md-3', 'mb-4'); // Bootstrap columns
+          cartaCol.classList.add('col-6', 'col-sm-4', 'col-md-3');
 
           const carta = document.createElement('div');
-          carta.classList.add('card', 'carta');
-          carta.dataset.id = String(senal.id); // Convertimos el id a string
-          
+          carta.classList.add('card', 'carta', 'shadow-sm', 'rounded');
+          carta.dataset.id = String(senal.id);
+
           carta.innerHTML = `
-            <img src="${senal.imagen}" alt="Señal de tránsito" class="card-img-top d-none">
-            <div class="card-body p-2 text-center carta-reverso">?</div>
+            <div class="card-body carta-reverso d-flex align-items-center justify-content-center">
+              <span class="fs-1 fw-bold text-secondary">?</span>
+            </div>
+            <img src="${senal.imagen}" alt="Señal de tránsito" class="card-img-top d-none rounded">
           `;
 
           carta.addEventListener('click', voltearCarta);
@@ -83,10 +84,11 @@ import Layout from '../layouts/Layout.astro';
       let cartasVolteadas = [];
       let paresEncontrados = 0;
 
+      // Función para voltear una carta
       function voltearCarta() {
         if (cartasVolteadas.length < 2 && !this.classList.contains('encontrada')) {
-          this.querySelector('img').classList.remove('d-none');
           this.querySelector('.carta-reverso').classList.add('d-none');
+          this.querySelector('img').classList.remove('d-none');
           cartasVolteadas.push(this);
 
           if (cartasVolteadas.length === 2) {
@@ -95,26 +97,33 @@ import Layout from '../layouts/Layout.astro';
         }
       }
 
+      // Función para verificar si las cartas forman una pareja
       function verificarPareja() {
         const [carta1, carta2] = cartasVolteadas;
+
         if (carta1.dataset.id === carta2.dataset.id) {
           carta1.classList.add('encontrada');
           carta2.classList.add('encontrada');
           paresEncontrados++;
+
           mostrarToast('¡Correcto! ¡Sigue así! 🎉', 'success');
+
           if (paresEncontrados === senales.length) {
             mostrarToast('¡Felicidades! Has encontrado todos los pares. ¡Eres un campeón! 🏆', 'success', true);
           }
         } else {
-          carta1.querySelector('img').classList.add('d-none');
           carta1.querySelector('.carta-reverso').classList.remove('d-none');
-          carta2.querySelector('img').classList.add('d-none');
+          carta1.querySelector('img').classList.add('d-none');
           carta2.querySelector('.carta-reverso').classList.remove('d-none');
+          carta2.querySelector('img').classList.add('d-none');
+
           mostrarToast('¡No es una pareja! Inténtalo de nuevo. 👍', 'warning');
         }
+
         cartasVolteadas = [];
       }
 
+      // Iniciar el juego al hacer clic en el botón
       iniciarJuegoBtn.addEventListener('click', crearTablero);
     });
   </script>
@@ -123,7 +132,10 @@ import Layout from '../layouts/Layout.astro';
     /* Estilo para las cartas */
     .carta {
       cursor: pointer;
-      transition: transform 0.2s ease-in-out;
+      transition: transform 0.3s ease-in-out;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      overflow: hidden;
     }
 
     .carta:hover {
@@ -131,17 +143,34 @@ import Layout from '../layouts/Layout.astro';
     }
 
     .carta img {
+      width: 100%;
+      height: auto;
       object-fit: cover;
     }
 
     .carta-reverso {
-      background-color: #283b3d;
-      color: white;
+      background-color: #f8f9fa;
+      color: #495057;
       font-size: 2rem;
-      border-radius: 0.25rem;
+      border-radius: 10px;
+      transition: all 0.3s ease-in-out;
     }
 
-    /* Distribución responsiva con Bootstrap */
+    .carta.encontrada {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    /* Animaciones */
+    .carta img.d-none {
+      display: none;
+    }
+
+    .carta .carta-reverso.d-none {
+      display: none;
+    }
+
+    /* Distribución responsiva */
     @media (max-width: 768px) {
       .carta {
         height: auto;
@@ -150,15 +179,15 @@ import Layout from '../layouts/Layout.astro';
 
     @media (min-width: 769px) {
       .carta {
-        height: 200px;
+        height: 150px;
       }
     }
 
     /* Estilo para los toasts */
     .toast {
-      min-width: 200px;
-      max-width: 300px;
-      z-index: 1050; /* Asegúrate de que los toasts estén por encima de otros elementos */
+      min-width: 250px;
+      max-width: 350px;
+      z-index: 1050;
     }
 
     .toast-body {
@@ -184,7 +213,7 @@ import Layout from '../layouts/Layout.astro';
 
     /* Estilo para los toasts grandes */
     .toast-grande .toast-body {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
     }
   </style>
 </Layout>

@@ -1,96 +1,242 @@
 ---
 import Layout from '../layouts/Layout.astro';
 ---
-
 <Layout title="Videos de Seguridad Vial">
-  <h2 class="text-center my-4">Videos de Seguridad Vial</h2>
-  
+  <h2 class="text-center my-4 text-primary">Videos Educativos de Seguridad Vial</h2>
+
   <div class="container">
-    <div class="row">
+    <div class="row g-4">
       <!-- Bloque de video 1 -->
-      <div class="col-md-6 mb-4">
-        <div class="card border-light">
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-light">
+          <img src="https://img.youtube.com/vi/_CJ_7dFShQE/hqdefault.jpg" class="card-img-top" alt="Miniatura del video">
           <div class="card-body text-center">
-            <h5 class="card-title">Título del Video 1</h5>
-            <p class="card-text">Descripción breve del video 1 que explica su contenido y propósito.</p>
-            <p class="card-text"><small class="text-muted">Autor: Nombre del Autor 1</small></p>
-            <div class="embed-responsive embed-responsive-16by9 mx-auto">
-              <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/VIDEO_ID_1" allowfullscreen></iframe>
-            </div>
+            <h5 class="card-title fw-bold">Transitar Correctamente por la Ciudad</h5>
+            <p class="card-text">Aprende cómo moverte de manera segura por las calles de tu ciudad.</p>
+            <p class="card-text"><small class="text-muted">Autor: Educación Vial Argentina</small></p>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#videoModal1">Ver Video</button>
           </div>
         </div>
       </div>
-      <!-- Fin del bloque de video 1 -->
 
       <!-- Bloque de video 2 -->
-      <div class="col-md-6 mb-4">
-        <div class="card border-light">
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-light">
+          <img src="https://img.youtube.com/vi/rnb0fkpeOao/hqdefault.jpg" class="card-img-top" alt="Miniatura del video">
           <div class="card-body text-center">
-            <h5 class="card-title">Título del Video 2</h5>
-            <p class="card-text">Descripción breve del video 2 que explica su contenido y propósito.</p>
-            <p class="card-text"><small class="text-muted">Autor: Nombre del Autor 2</small></p>
-            <div class="embed-responsive embed-responsive-16by9 mx-auto">
-              <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/VIDEO_ID_2" allowfullscreen></iframe>
-            </div>
+            <h5 class="card-title fw-bold">Señales de Tráfico</h5>
+            <p class="card-text">Descubre el significado de las señales de tráfico más importantes.</p>
+            <p class="card-text"><small class="text-muted">Autor: Dirección Nacional de Seguridad Vial</small></p>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#videoModal2">Ver Video</button>
           </div>
         </div>
       </div>
-      <!-- Fin del bloque de video 2 -->
-    </div>
-    
-    <div class="row">
+
       <!-- Bloque de video 3 -->
-      <div class="col-md-6 mb-4">
-        <div class="card border-light">
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-light">
+          <img src="https://img.youtube.com/vi/VcA7mD6LOcU/hqdefault.jpg" class="card-img-top" alt="Miniatura del video">
           <div class="card-body text-center">
-            <h5 class="card-title">Título del Video 3</h5>
-            <p class="card-text">Descripción breve del video 3 que explica su contenido y propósito.</p>
-            <p class="card-text"><small class="text-muted">Autor: Nombre del Autor 3</small></p>
-            <div class="embed-responsive embed-responsive-16by9 mx-auto">
-              <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/VIDEO_ID_3" allowfullscreen></iframe>
-            </div>
+            <h5 class="card-title fw-bold">¿En Qué Consiste la Seguridad Vial?</h5>
+            <p class="card-text">Conoce los principios básicos de la seguridad vial y su importancia.</p>
+            <p class="card-text"><small class="text-muted">Autor: Escuela de Educación Vial</small></p>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#videoModal3">Ver Video</button>
           </div>
         </div>
       </div>
-      <!-- Fin del bloque de video 3 -->
 
       <!-- Bloque de video 4 -->
-      <div class="col-md-6 mb-4">
-        <div class="card border-light">
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-light">
+          <img src="https://img.youtube.com/vi/dGUFyNGP-T8/hqdefault.jpg" class="card-img-top" alt="Miniatura del video">
           <div class="card-body text-center">
-            <h5 class="card-title">Título del Video 4</h5>
-            <p class="card-text">Descripción breve del video 4 que explica su contenido y propósito.</p>
-            <p class="card-text"><small class="text-muted">Autor: Nombre del Autor 4</small></p>
-            <div class="embed-responsive embed-responsive-16by9 mx-auto">
-              <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/VIDEO_ID_4" allowfullscreen></iframe>
-            </div>
+            <h5 class="card-title fw-bold">Sobre la Vía Pública</h5>
+            <p class="card-text">Aprende cómo comportarte correctamente en la vía pública.</p>
+            <p class="card-text"><small class="text-muted">Autor: Fundación Gonzalo Rodríguez</small></p>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#videoModal4">Ver Video</button>
           </div>
         </div>
       </div>
-      <!-- Fin del bloque de video 4 -->
+
+      <!-- Bloque de video 5 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-light">
+          <img src="https://img.youtube.com/vi/QekmjKbvRlI/hqdefault.jpg" class="card-img-top" alt="Miniatura del video">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">Los Colores del Semáforo</h5>
+            <p class="card-text">Descubre el significado de los colores del semáforo y cómo usarlos correctamente.</p>
+            <p class="card-text"><small class="text-muted">Autor: Educación Vial Infantil</small></p>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#videoModal5">Ver Video</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloque de video 6 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-light">
+          <img src="https://img.youtube.com/vi/FVPrv3-HtIA/hqdefault.jpg" class="card-img-top" alt="Miniatura del video">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">Smart Vial para Niños de 5 a 7 Años</h5>
+            <p class="card-text">Un video educativo para enseñar seguridad vial a niños pequeños.</p>
+            <p class="card-text"><small class="text-muted">Autor: Smart Vial</small></p>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#videoModal6">Ver Video</button>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <!-- Agregar más filas de videos según sea necesario -->
   </div>
+
+  <!-- Modales para los videos -->
+  <div class="modal fade" id="videoModal1" tabindex="-1" aria-labelledby="videoModalLabel1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="videoModalLabel1">Transitar Correctamente por la Ciudad</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="ratio ratio-16x9">
+            <iframe id="videoIframe1" src="https://www.youtube.com/embed/_CJ_7dFShQE?enablejsapi=1" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="videoModal2" tabindex="-1" aria-labelledby="videoModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="videoModalLabel2">Señales de Tráfico</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="ratio ratio-16x9">
+            <iframe id="videoIframe2" src="https://www.youtube.com/embed/rnb0fkpeOao?enablejsapi=1" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="videoModal3" tabindex="-1" aria-labelledby="videoModalLabel3" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="videoModalLabel3">¿En Qué Consiste la Seguridad Vial?</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="ratio ratio-16x9">
+            <iframe id="videoIframe3" src="https://www.youtube.com/embed/VcA7mD6LOcU?enablejsapi=1" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="videoModal4" tabindex="-1" aria-labelledby="videoModalLabel4" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="videoModalLabel4">Sobre la Vía Pública</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="ratio ratio-16x9">
+            <iframe id="videoIframe4" src="https://www.youtube.com/embed/dGUFyNGP-T8?enablejsapi=1" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="videoModal5" tabindex="-1" aria-labelledby="videoModalLabel5" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="videoModalLabel5">Los Colores del Semáforo</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="ratio ratio-16x9">
+            <iframe id="videoIframe5" src="https://www.youtube.com/embed/QekmjKbvRlI?enablejsapi=1" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="videoModal6" tabindex="-1" aria-labelledby="videoModalLabel6" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="videoModalLabel6">Smart Vial para Niños de 5 a 7 Años</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="ratio ratio-16x9">
+            <iframe id="videoIframe6" src="https://www.youtube.com/embed/FVPrv3-HtIA?enablejsapi=1" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script para detener los videos al cerrar el modal -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Función para detener un video dentro de un iframe
+      function stopVideo(iframeId) {
+        const iframe = document.getElementById(iframeId);
+        if (iframe && iframe.contentWindow) {
+          try {
+            iframe.contentWindow.postMessage(
+              JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }),
+              '*'
+            );
+          } catch (error) {
+            console.error(`Error al pausar el video ${iframeId}:`, error);
+          }
+        }
+      }
+
+      // Asignar eventos a los modales
+      const modals = [
+        { modalId: 'videoModal1', iframeId: 'videoIframe1' },
+        { modalId: 'videoModal2', iframeId: 'videoIframe2' },
+        { modalId: 'videoModal3', iframeId: 'videoIframe3' },
+        { modalId: 'videoModal4', iframeId: 'videoIframe4' },
+        { modalId: 'videoModal5', iframeId: 'videoIframe5' },
+        { modalId: 'videoModal6', iframeId: 'videoIframe6' },
+      ];
+
+      modals.forEach(({ modalId, iframeId }) => {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.addEventListener('hidden.bs.modal', () => {
+            stopVideo(iframeId);
+          });
+        }
+      });
+    });
+  </script>
 </Layout>
-
-<style>
-  .card {
-    border-radius: 0.5rem;
-    border: 2px solid #283b3d; /* Borde celeste suave */
-    background-color: #81f3f3; /* Fondo blanco suave para el contenido */
-  }
-
-  .card-body {
-    text-align: center; /* Centrar el texto en el cuerpo de la tarjeta */
-  }
-
-  .embed-responsive {
-    margin-bottom: 1rem;
-  }
-
-  .embed-responsive-item {
-    max-width: 100%;
-    height: auto;
-  }
-</style>
