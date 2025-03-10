@@ -120,14 +120,13 @@ import Layout from '../layouts/Layout.astro';
       let draggedElement = null; // Elemento que se está arrastrando con touch
       let touchStartX = 0;     // Posición X inicial del toque
       let touchStartY = 0;     // Posición Y inicial del toque
-      let initialScrollY = 0;    // ¡NUEVA VARIABLE! Para guardar el scroll inicial
 
       const addTouchEventListeners = () => {
         document.querySelectorAll('.draggable-item').forEach(item => {
-          item.addEventListener('touchstart', handleTouchStart, { passive: false });
-          item.addEventListener('touchmove', handleTouchMove, { passive: false });
+          item.addEventListener('touchstart', handleTouchStart, { passive: false }); // Passive: false para preventDefault
+          item.addEventListener('touchmove', handleTouchMove, { passive: false });  // Passive: false para preventDefault
           item.addEventListener('touchend', handleTouchEnd);
-          item.addEventListener('touchcancel', handleTouchEnd);
+          item.addEventListener('touchcancel', handleTouchEnd); // Opcional: Manejar 'touchcancel'
         });
       };
 
@@ -140,46 +139,45 @@ import Layout from '../layouts/Layout.astro';
         touchStartX = touch.clientX - draggedElement.getBoundingClientRect().left;
         touchStartY = touch.clientY - draggedElement.getBoundingClientRect().top;
 
-        draggedElement.style.position = 'absolute';
-        draggedElement.style.zIndex = '1000';
-        initialScrollY = window.scrollY; // ¡NUEVA LÍNEA! Guardar el scroll inicial
-        updateElementPosition(touch);
+        draggedElement.style.position = 'absolute'; // Convertir a posición absoluta para moverlo libremente
+        draggedElement.style.zIndex = '1000'; // Asegurar que esté por encima de otros elementos
+        updateElementPosition(touch); // Actualizar posición inicial
       };
 
       const handleTouchMove = (e) => {
         if (!draggedElement) return;
-        e.preventDefault();
-        updateElementPosition(e.touches[0]);
+        e.preventDefault(); // ¡IMPORTANTE! Prevenir scroll en pantallas táctiles
+        updateElementPosition(e.touches[0]); // Actualizar la posición al mover el dedo
       };
 
       const handleTouchEnd = (e) => {
         if (!draggedElement) return;
 
-        const touch = e.changedTouches[0];
+        const touch = e.changedTouches[0]; // Usar changedTouches para 'touchend'
         const category = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('.category-box');
 
         if (category) {
-          checkTouchAnswer(category, draggedElement);
+          checkTouchAnswer(category, draggedElement); // Llamar a función de verificación para touch
         }
 
-        resetElementPosition();
+        resetElementPosition(); // Restablecer estilos del elemento arrastrado
       };
 
 
       const updateElementPosition = (touch) => {
         const elementWidth = draggedElement.offsetWidth;
         const elementHeight = draggedElement.offsetHeight;
-        // const scrollY = window.scrollY;  <-- ¡HEMOS QUITADO ESTA LÍNEA DE AQUÍ!
+        const scrollY = window.scrollY; // ¡NUEVO! Obtener la posición vertical del scroll
 
         draggedElement.style.left = `${touch.clientX - touchStartX - (elementWidth / 2.5)}px`;
-        draggedElement.style.top = `${touch.clientY - touchStartY - (elementHeight / 2.5) - initialScrollY}px`; // ¡AHORA RESTAMOS initialScrollY!
+        draggedElement.style.top = `${touch.clientY - touchStartY - (elementHeight / 2.5) - scrollY}px`; // ¡RESTAMOS scrollY AQUÍ!
       };
 
       const resetElementPosition = () => {
-        if (draggedElement) {
-          draggedElement.style.position = 'static';
-          draggedElement.style.zIndex = 'auto';
-          draggedElement = null;
+        if (draggedElement) { // Verificar si draggedElement existe antes de manipularlo
+          draggedElement.style.position = 'static'; // Volver a posición estática
+          draggedElement.style.zIndex = 'auto';    // Volver al z-index automático
+          draggedElement = null;                   // Limpiar la variable draggedElement
         }
       };
 
@@ -188,14 +186,14 @@ import Layout from '../layouts/Layout.astro';
         const correctCategory = itemsData.find(item => item.id === element.id)?.category;
 
         if (correctCategory === category.id) {
-          element.remove();
+          element.remove(); // <-- ¡AHORA USAMOS element.remove() EN TOUCH, IGUAL QUE EN ESCRITORIO!
           correctItems++;
           mostrarToast('¡Correcto! Elemento colocado. 🎉', 'success');
           if (correctItems === totalItems) {
             setTimeout(finalToast, 500);
           }
         } else {
-          element.classList.add('shake');
+          element.classList.add('shake'); // Animación de shake si es incorrecto
           setTimeout(() => element.classList.remove('shake'), 500);
           mostrarToast('Elemento incorrecto. ¡Inténtalo de nuevo! ❌', 'danger');
         }
@@ -212,7 +210,7 @@ import Layout from '../layouts/Layout.astro';
           const div = document.createElement('div');
           div.id = item.id;
           div.className = 'draggable-item rounded shadow-sm text-center';
-          div.draggable = true;
+          div.draggable = true; // Importante mantener draggable=true para desktop drag
           div.style.width = '80px';
           div.style.maxWidth = '100%';
           div.style.cursor = 'grab';
@@ -237,10 +235,10 @@ import Layout from '../layouts/Layout.astro';
         mostrarToast('¡El juego ha comenzado! Arrastra los elementos a la categoría correcta.', 'info');
 
         //  ---  AÑADIR EVENT LISTENERS TÁCTILES  ---
-        addTouchEventListeners();
+        addTouchEventListeners(); // Llamar a la función para añadir listeners táctiles
       }
 
-      initializeGame();
+      initializeGame(); // Llamar a initializeGame DESPUÉS de definirla y DESPUÉS de las funciones de touch
 
       // Eventos para las áreas de drop (categorías) - SIN CAMBIOS
       categories.forEach((category) => {
@@ -251,6 +249,7 @@ import Layout from '../layouts/Layout.astro';
           const item = document.getElementById(itemId);
           const correctCategory = itemsData.find((data) => data.id === itemId)?.category;
           if (correctCategory === category.id) {
+            // Remover el elemento del contenedor original para que desaparezca
             if (item) {
               item.remove();
             }
