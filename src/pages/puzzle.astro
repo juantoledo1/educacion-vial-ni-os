@@ -182,7 +182,7 @@ import Layout from '../layouts/Layout.astro';
         const correctCategory = itemsData.find(item => item.id === element.id)?.category;
 
         if (correctCategory === category.id) {
-          category.appendChild(element); // Añadir elemento a la categoría
+          element.remove(); // <-- ¡AHORA USAMOS element.remove() EN TOUCH, IGUAL QUE EN ESCRITORIO!
           correctItems++;
           mostrarToast('¡Correcto! Elemento colocado. 🎉', 'success');
           if (correctItems === totalItems) {
