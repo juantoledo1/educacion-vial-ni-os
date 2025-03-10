@@ -115,7 +115,88 @@ import Layout from '../layouts/Layout.astro';
         }, 5000);
       }
 
-      // Inicializa el juego
+
+      //  ---  FUNCIONES Y VARIABLES PARA TOUCH (MÓVIL) -  **MOVIDO ARRIBA**  ---
+      let draggedElement = null; // Elemento que se está arrastrando con touch
+      let touchStartX = 0;     // Posición X inicial del toque
+      let touchStartY = 0;     // Posición Y inicial del toque
+
+      const addTouchEventListeners = () => {
+        document.querySelectorAll('.draggable-item').forEach(item => {
+          item.addEventListener('touchstart', handleTouchStart, { passive: false }); // Passive: false para preventDefault
+          item.addEventListener('touchmove', handleTouchMove, { passive: false });  // Passive: false para preventDefault
+          item.addEventListener('touchend', handleTouchEnd);
+          item.addEventListener('touchcancel', handleTouchEnd); // Opcional: Manejar 'touchcancel'
+        });
+      };
+
+
+      const handleTouchStart = (e) => {
+        draggedElement = e.target.closest('.draggable-item');
+        if (!draggedElement) return;
+
+        const touch = e.touches[0];
+        touchStartX = touch.clientX - draggedElement.getBoundingClientRect().left;
+        touchStartY = touch.clientY - draggedElement.getBoundingClientRect().top;
+
+        draggedElement.style.position = 'absolute'; // Convertir a posición absoluta para moverlo libremente
+        draggedElement.style.zIndex = '1000'; // Asegurar que esté por encima de otros elementos
+        updateElementPosition(touch); // Actualizar posición inicial
+      };
+
+      const handleTouchMove = (e) => {
+        if (!draggedElement) return;
+        e.preventDefault(); // ¡IMPORTANTE! Prevenir scroll en pantallas táctiles
+        updateElementPosition(e.touches[0]); // Actualizar la posición al mover el dedo
+      };
+
+      const handleTouchEnd = (e) => {
+        if (!draggedElement) return;
+
+        const touch = e.changedTouches[0]; // Usar changedTouches para 'touchend'
+        const category = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('.category-box');
+
+        if (category) {
+          checkTouchAnswer(category, draggedElement); // Llamar a función de verificación para touch
+        }
+
+        resetElementPosition(); // Restablecer estilos del elemento arrastrado
+      };
+
+
+      const updateElementPosition = (touch) => {
+        draggedElement.style.left = `${touch.clientX - touchStartX}px`;
+        draggedElement.style.top = `${touch.clientY - touchStartY}px`;
+      };
+
+      const resetElementPosition = () => {
+        if (draggedElement) { // Verificar si draggedElement existe antes de manipularlo
+          draggedElement.style.position = 'static'; // Volver a posición estática
+          draggedElement.style.zIndex = 'auto';    // Volver al z-index automático
+          draggedElement = null;                   // Limpiar la variable draggedElement
+        }
+      };
+
+
+      const checkTouchAnswer = (category, element) => {
+        const correctCategory = itemsData.find(item => item.id === element.id)?.category;
+
+        if (correctCategory === category.id) {
+          category.appendChild(element); // Añadir elemento a la categoría
+          correctItems++;
+          mostrarToast('¡Correcto! Elemento colocado. 🎉', 'success');
+          if (correctItems === totalItems) {
+            setTimeout(finalToast, 500);
+          }
+        } else {
+          element.classList.add('shake'); // Animación de shake si es incorrecto
+          setTimeout(() => element.classList.remove('shake'), 500);
+          mostrarToast('Elemento incorrecto. ¡Inténtalo de nuevo! ❌', 'danger');
+        }
+      };
+
+
+      // Inicializa el juego - **DESPUÉS de las funciones de touch**
       function initializeGame() {
         correctItems = 0;
         const shuffledItems = [...itemsData].sort(() => Math.random() - 0.5);
@@ -125,9 +206,9 @@ import Layout from '../layouts/Layout.astro';
           const div = document.createElement('div');
           div.id = item.id;
           div.className = 'draggable-item rounded shadow-sm text-center';
-          div.draggable = true;
+          div.draggable = true; // Importante mantener draggable=true para desktop drag
           div.style.width = '80px';
-          div.style.maxWidth = '100%'; // Asegura que no se desborde en pantallas pequeñas
+          div.style.maxWidth = '100%';
           div.style.cursor = 'grab';
           div.innerHTML = `
             <img src="${item.image}" alt="${item.label}" onerror="this.src='/assets/images/placeholder.jpg'; this.alt='Imagen no disponible'" style="width: 100%; height: 80px; object-fit: cover;" />
@@ -137,8 +218,9 @@ import Layout from '../layouts/Layout.astro';
         });
 
         document.querySelectorAll('.draggable-item').forEach((item) => {
+          //  ---  EVENTOS PARA DESKTOP (DRAG AND DROP CON RATÓN)  ---
           item.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', item.id); // @ts-ignore  <-- ¡AÑADIDO!
+            e.dataTransfer.setData('text/plain', item.id); // @ts-ignore
             item.classList.add('opacity-50');
           });
           item.addEventListener('dragend', () => {
@@ -147,11 +229,14 @@ import Layout from '../layouts/Layout.astro';
         });
 
         mostrarToast('¡El juego ha comenzado! Arrastra los elementos a la categoría correcta.', 'info');
+
+        //  ---  AÑADIR EVENT LISTENERS TÁCTILES  ---
+        addTouchEventListeners(); // Llamar a la función para añadir listeners táctiles
       }
 
-      initializeGame();
+      initializeGame(); // Llamar a initializeGame DESPUÉS de definirla y DESPUÉS de las funciones de touch
 
-      // Eventos para las áreas de drop (categorías)
+      // Eventos para las áreas de drop (categorías) - SIN CAMBIOS
       categories.forEach((category) => {
         category.addEventListener('dragover', (e) => e.preventDefault());
         category.addEventListener('drop', (e) => {
@@ -178,6 +263,8 @@ import Layout from '../layouts/Layout.astro';
       resetButton.addEventListener('click', () => {
         initializeGame();
       });
+
+
     });
   </script>
 
@@ -231,7 +318,7 @@ import Layout from '../layouts/Layout.astro';
     justify-content: center;
     background: white;
     flex-shrink: 0;
-    touch-action: none;
+    touch-action: none; /* Añadido:  Para evitar problemas de "touch" y "drag" simultáneos */
   }
 
   .draggable-item img {
