@@ -1,0 +1,255 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Juego de Seguridad Vial">
+  <h2 class="text-center my-4 text-primary">Asocia los Elementos de Seguridad Vial</h2>
+  <p class="text-center text-muted mb-5">
+    Arrastra los elementos de seguridad vial y colócalos en la categoría correcta.
+  </p>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <!-- Contenedor del juego -->
+        <div class="d-flex flex-column align-items-center">
+          <!-- Categorías -->
+          <div class="mb-4 d-flex flex-wrap justify-content-center">
+            <div
+              id="category1"
+              class="border border-3 border-success rounded p-4 mb-3 position-relative d-flex flex-column align-items-center justify-content-center shadow-lg"
+              style="width: 200px; height: 150px; background-color: #4dc63b;"
+            >
+              <p class="text-center m-0 fw-bold">Señales de Tráfico</p>
+            </div>
+            <div
+              id="category2"
+              class="border border-3 border-warning rounded p-4 mb-3 position-relative d-flex flex-column align-items-center justify-content-center shadow-lg"
+              style="width: 200px; height: 150px; background-color: #efdd8c;"
+            >
+              <p class="text-center m-0 fw-bold">Protección Personal</p>
+            </div>
+            <div
+              id="category3"
+              class="border border-3 border-danger rounded p-4 mb-3 position-relative d-flex flex-column align-items-center justify-content-center shadow-lg"
+              style="width: 200px; height: 150px; background-color: #df754b;"
+            >
+              <p class="text-center m-0 fw-bold">Vehículos Seguros</p>
+            </div>
+            <div
+              id="category4"
+              class="border border-3 border-info rounded p-4 mb-3 position-relative d-flex flex-column align-items-center justify-content-center shadow-lg"
+              style="width: 200px; height: 150px; background-color: #8cb8e3;"
+            >
+              <p class="text-center m-0 fw-bold">Normas Peatonales</p>
+            </div>
+          </div>
+
+          <!-- Elementos para arrastrar -->
+          <div id="draggableItems" class="d-flex gap-3 flex-wrap justify-content-center"></div>
+
+          <!-- Botón de reinicio -->
+          <button id="resetButton" class="btn btn-success mt-4">Volver a Jugar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toasts para feedback (ubicados en la esquina inferior derecha) -->
+  <div id="toastContainer" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100;"></div>
+
+  <!-- Toast final centrado -->
+  <div id="finalToast" class="toast d-none final-toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header text-center">
+      <strong class="me-auto">¡Felicidades!</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      ¡Has completado el juego! ¡Eres un campeón! 🏆
+    </div>
+  </div>
+
+  <!-- Cargar Bootstrap CSS y JS vía CDN -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Script del juego -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const categories = document.querySelectorAll('.border');
+      const draggableItemsContainer = document.getElementById('draggableItems');
+      const resetButton = document.getElementById('resetButton');
+      const toastContainer = document.getElementById('toastContainer');
+      const finalToastEl = document.getElementById('finalToast');
+
+      // Datos del juego
+      const itemsData = [
+        { id: 'item1', image: '/images/senales/traffic-light.jpg', label: 'Semáforo', category: 'category1' },
+        { id: 'item2', image: '/images/senales/helmet.jpg', label: 'Casco', category: 'category2' },
+        { id: 'item3', image: '/images/senales/stop-sign.jpg', label: 'Señal de Stop', category: 'category1' },
+        { id: 'item4', image: '/images/senales/car.jpg', label: 'Coche', category: 'category3' },
+        { id: 'item5', image: '/images/senales/bicycle.jpg', label: 'Bicicleta', category: 'category3' },
+        { id: 'item6', image: '/images/senales/pedestrian-crossing.jpg', label: 'Cruce peatonal', category: 'category4' },
+        { id: 'item7', image: '/images/senales/speed-limit-50.jpg', label: 'Límite de velocidad', category: 'category1' },
+        { id: 'item8', image: '/images/senales/no-entry.jpg', label: 'Prohibido el paso', category: 'category1' },
+        { id: 'item9', image: '/images/senales/bus.jpg', label: 'Autobús', category: 'category3' },
+        { id: 'item10', image: '/images/senales/motorcycle.jpg', label: 'Moto', category: 'category3' },
+      ];
+
+      let correctItems = 0;
+      let totalItems = itemsData.length;
+
+      // Función para mostrar un toast personalizado
+      function mostrarToast(mensaje, tipo = 'info', grande = false) {
+        const toast = document.createElement('div');
+        toast.classList.add('toast', 'fade', 'show', `bg-${tipo}`);
+        if (grande) {
+          toast.classList.add('toast-grande');
+        }
+        toast.innerHTML = `
+          <div class="toast-body">
+            ${mensaje}
+          </div>
+        `;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), grande ? 5000 : 3000);
+      }
+
+      // Función para mostrar el toast final centrado
+      function finalToast() {
+        finalToastEl.classList.remove('d-none');
+        finalToastEl.classList.add('show');
+        setTimeout(() => {
+          finalToastEl.classList.remove('show');
+          finalToastEl.classList.add('d-none');
+        }, 5000);
+      }
+
+      // Inicializa el juego
+      function initializeGame() {
+        correctItems = 0;
+        const shuffledItems = [...itemsData].sort(() => Math.random() - 0.5);
+        draggableItemsContainer.innerHTML = '';
+
+        shuffledItems.forEach((item) => {
+          const div = document.createElement('div');
+          div.id = item.id;
+          div.className = 'draggable-item rounded shadow-sm text-center';
+          div.draggable = true;
+          div.style.width = '100px';
+          div.style.cursor = 'grab';
+          div.innerHTML = `
+            <img src="${item.image}" alt="${item.label}" onerror="this.src='/assets/images/placeholder.jpg'; this.alt='Imagen no disponible'" style="width: 100%; height: 100px; object-fit: cover;" />
+            <p class="small text-muted mt-1">${item.label}</p>
+          `;
+          draggableItemsContainer.appendChild(div);
+        });
+
+        document.querySelectorAll('.draggable-item').forEach((item) => {
+          item.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', item.id);
+            item.classList.add('opacity-50');
+          });
+          item.addEventListener('dragend', () => {
+            item.classList.remove('opacity-50');
+          });
+        });
+
+        mostrarToast('¡El juego ha comenzado! Arrastra los elementos a la categoría correcta.', 'info');
+      }
+
+      initializeGame();
+
+      // Eventos para las áreas de drop (categorías)
+      categories.forEach((category) => {
+        category.addEventListener('dragover', (e) => e.preventDefault());
+        category.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const itemId = e.dataTransfer.getData('text/plain');
+          const item = document.getElementById(itemId);
+          const correctCategory = itemsData.find((data) => data.id === itemId)?.category;
+          if (correctCategory === category.id) {
+            // Remover el elemento del contenedor original para que desaparezca
+            if (item) {
+              item.remove();
+            }
+            correctItems++;
+            mostrarToast('¡Correcto! Elemento colocado. 🎉', 'success');
+            if (correctItems === totalItems) {
+              setTimeout(finalToast, 500);
+            }
+          } else {
+            mostrarToast('Elemento incorrecto. ¡Inténtalo de nuevo! ❌', 'danger');
+          }
+        });
+      });
+
+      resetButton.addEventListener('click', () => {
+        initializeGame();
+      });
+    });
+  </script>
+
+  <style>
+    /* Estilo para los toasts */
+    .toast {
+      min-width: 200px;
+      max-width: 300px;
+      z-index: 1050;
+    }
+    .toast .toast-body {
+      font-size: 1rem;
+      color: #fff;
+    }
+    .bg-success {
+      background-color: #28a745 !important;
+    }
+    .bg-info {
+      background-color: #17a2b8 !important;
+    }
+    .bg-danger {
+      background-color: #dc3545 !important;
+    }
+    .bg-warning {
+      background-color: #ffc107 !important;
+    }
+    .toast-grande .toast-body {
+      font-size: 1.5rem;
+    }
+    /* Estilo para el toast final centrado */
+    .final-toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1100;
+      min-width: 300px;
+      text-align: center;
+      background-color: #28a745 !important;
+      color: #fff !important;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-size: 1.5rem;
+    }
+
+    /* Estilos para las cartas (elementos arrastrables) */
+    .draggable-item {
+      cursor: grab;
+    }
+    .opacity-50 {
+      opacity: 0.5;
+    }
+    
+    /* Distribución responsiva para las cartas (ya que se usan en otro juego, se mantiene) */
+    @media (max-width: 768px) {
+      .carta {
+        height: auto;
+      }
+    }
+    @media (min-width: 769px) {
+      .carta {
+        height: 200px;
+      }
+    }
+  </style>
+</Layout>
