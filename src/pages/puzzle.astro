@@ -167,9 +167,10 @@ import Layout from '../layouts/Layout.astro';
       const updateElementPosition = (touch) => {
         const elementWidth = draggedElement.offsetWidth;
         const elementHeight = draggedElement.offsetHeight;
+        const scrollY = window.scrollY; // ¡NUEVO! Obtener la posición vertical del scroll
 
-        draggedElement.style.left = `${touch.clientX - touchStartX - (elementWidth / 2.5)}px`;  // ¡DIVIDIMOS POR 2.5 EN VEZ DE 2!
-        draggedElement.style.top = `${touch.clientY - touchStartY - (elementHeight / 2.5)}px`; // ¡DIVIDIMOS POR 2.5 EN VEZ DE 2!
+        draggedElement.style.left = `${touch.clientX - touchStartX - (elementWidth / 2.5)}px`;
+        draggedElement.style.top = `${touch.clientY - touchStartY - (elementHeight / 2.5) - scrollY}px`; // ¡RESTAMOS scrollY AQUÍ!
       };
 
       const resetElementPosition = () => {
