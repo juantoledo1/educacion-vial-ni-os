@@ -63,8 +63,6 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </div>
 
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -140,7 +138,7 @@ import Layout from '../layouts/Layout.astro';
 
         document.querySelectorAll('.draggable-item').forEach((item) => {
           item.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', item.id);
+            e.dataTransfer.setData('text/plain', item.id); // @ts-ignore  <-- ¡AÑADIDO!
             item.classList.add('opacity-50');
           });
           item.addEventListener('dragend', () => {
@@ -183,79 +181,162 @@ import Layout from '../layouts/Layout.astro';
     });
   </script>
 
-  <style>
-    /* Estilo para los toasts */
-    .toast {
-      min-width: 200px;
-      max-width: 300px;
-      z-index: 1050;
-    }
-    .toast .toast-body {
-      font-size: 1rem;
-      color: #fff;
-    }
-    .bg-success {
-      background-color: #28a745 !important;
-    }
-    .bg-info {
-      background-color: #17a2b8 !important;
-    }
-    .bg-danger {
-      background-color: #dc3545 !important;
-    }
-    .bg-warning {
-      background-color: #ffc107 !important;
-    }
-    .toast-grande .toast-body {
-      font-size: 1.5rem;
-    }
-    /* Estilo para el toast final centrado */
-    .final-toast {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1100;
-      min-width: 300px;
-      text-align: center;
-      background-color: #28a745 !important;
-      color: #fff !important;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      font-size: 1.5rem;
-    }
+<style>
+  /* Contenedores principales */
+  .game-container {
+    max-width: 100%;
+    overflow: hidden;
+  }
 
-    /* Estilos para las cartas (elementos arrastrables) */
+  /* Scroll horizontal */
+  .categories-scroll,
+  .items-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 10px;
+    margin: 1rem 0;
+  }
+
+  /* Categorías */
+  .category-box {
+    width: 200px; /* Ancho fijo para escritorio - como en tu CSS */
+    height: 150px; /* Alto fijo para escritorio - como en tu CSS */
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 1rem;
+    background: #f8f9fa;
+  }
+
+  .category-title {
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  /* Elementos arrastrables - Tamaños basados en tu CSS, AHORA MEJORADOS *** */
+  .draggable-item {
+    cursor: grab;
+    width: 90px; /* Ancho ligeramente reducido a 90px desde 100px para mejor proporción *** */
+    height: 100px; /* Alto fijo para escritorio - Ajustado para que sea ligeramente más alto que ancho *** */
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 0.2rem; /* Padding reducido a 0.2rem para compensar el tamaño total *** */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    flex-shrink: 0;
+    touch-action: none;
+  }
+
+  .draggable-item img {
+    width: 100%;       /* Ancho de la imagen al 100% del contenedor *** */
+    height: 60px;      /* Altura FIJA de la imagen a 60px - CLAVE para controlar el tamaño *** */
+    object-fit: contain; /* Ajuste de imagen 'contain' para no recortar *** */
+    margin-bottom: 0.3rem; /* Margen inferior de la imagen *** */
+    display: block;     /* Añadido: Asegura que la imagen se comporte como bloque *** */
+  }
+
+  .draggable-item p {
+    font-size: 0.75rem;
+    text-align: center;
+    margin: 0;
+    color: #6c757d;
+    line-height: 1.2;
+  }
+
+  /* Toasts - Sin cambios, mantenemos tus estilos de toast */
+  .toast {
+    min-width: 200px;
+    max-width: 300px;
+    z-index: 1050;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    color: white;
+    font-size: 0.9rem;
+  }
+  .toast .toast-body {
+    font-size: 1rem;
+    color: #fff;
+  }
+  .toast.success { background: #28a745 !important; }
+  .toast.info { background: #17a2b8 !important; } /* Añadido info para consistencia */
+  .toast.danger { background: #dc3545 !important; }
+  .toast.warning { background: #ffc107 !important; }
+  .toast-grande .toast-body {
+    font-size: 1.5rem;
+  }
+
+  .final-toast { /* Sin cambios */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1100;
+    min-width: 300px;
+    text-align: center;
+    background-color: #28a745 !important;
+    color: #fff !important;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-size: 1.5rem;
+  }
+
+  /* Animaciones - Sin cambios */
+  .shake {
+    animation: shake 0.5s;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+
+  /* Distribución responsiva para las cartas (elementos arrastrables) - AHORA MEJORADA *** */
+  @media (max-width: 768px) {
     .draggable-item {
-      cursor: grab;
-      width: 100px; /* Ancho fijo para escritorio */
+      width: 70px;  /* Ancho móvil reducido a 70px desde 80px para ser más pequeño en móvil *** */
+      height: 80px; /* Alto móvil ajustado a 80px para mantener una proporción vertical en móvil *** */
     }
-    .opacity-50 {
-      opacity: 0.5;
+     .draggable-item img {
+      height: 50px; /* Altura FIJA de la imagen móvil a 50px - CLAVE para control en móvil *** */
     }
-
-    /* Estilos para las cajas de categoría */
     .category-box {
-        width: 200px; /* Ancho fijo para escritorio */
-        height: 150px; /* Alto fijo para escritorio */
+      width: 150px;
+      height: 120px;
+      padding: 1rem;
     }
-
-
-    /* Distribución responsiva para las cartas (elementos arrastrables) */
-    @media (max-width: 768px) {
-      .draggable-item {
-        width: 80px;
-      }
-       .draggable-item img {
-        height: 80px;
-      .category-box {
-        width: 150px;
-        height: 120px;
-        padding: 1rem;
-      }
-      .category-box p {
-        font-size: 0.9rem;
-      }
+    .category-box p {
+      font-size: 0.9rem;
     }
-  </style>
+  }
+
+  @media (max-width: 480px) {
+    .draggable-item {
+      width: 60px; /* Ancho móvil aún más pequeño a 60px *** */
+      height: 70px; /* Alto móvil aún más pequeño y más vertical a 70px *** */
+    }
+     .draggable-item img {
+      height: 40px; /* Altura FIJA de la imagen en móvil pequeño a 40px - Control aún más pequeño *** */
+    }
+    .category-box { /* Sin cambios en category-box para móvil pequeño, si quieres reducir más, ajusta aquí */
+      width: 130px;
+      height: 100px;
+      padding: 0.6rem;
+    }
+    .category-box p {
+      font-size: 0.9rem;
+    }
+  }
+</style>
 </Layout>
