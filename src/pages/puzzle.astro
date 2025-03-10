@@ -165,8 +165,11 @@ import Layout from '../layouts/Layout.astro';
 
 
       const updateElementPosition = (touch) => {
-        draggedElement.style.left = `${touch.clientX - touchStartX}px`;
-        draggedElement.style.top = `${touch.clientY - touchStartY}px`;
+        const elementWidth = draggedElement.offsetWidth;
+        const elementHeight = draggedElement.offsetHeight;
+
+        draggedElement.style.left = `${touch.clientX - touchStartX - (elementWidth / 2.5)}px`;  // ¡DIVIDIMOS POR 2.5 EN VEZ DE 2!
+        draggedElement.style.top = `${touch.clientY - touchStartY - (elementHeight / 2.5)}px`; // ¡DIVIDIMOS POR 2.5 EN VEZ DE 2!
       };
 
       const resetElementPosition = () => {
