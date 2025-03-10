@@ -170,7 +170,7 @@ import Layout from '../layouts/Layout.astro';
         const scrollY = window.scrollY; // ¡NUEVO! Obtener la posición vertical del scroll
 
         draggedElement.style.left = `${touch.clientX - touchStartX - (elementWidth / 2.5)}px`;
-        draggedElement.style.top = `${touch.clientY - touchStartY - (elementHeight / 2.5) - scrollY}px`; // ¡RESTAMOS scrollY AQUÍ!
+        draggedElement.style.top = `${touch.clientY - touchStartY - (elementHeight / 2.5) + scrollY}px`; // ¡RESTAMOS scrollY AQUÍ!
       };
 
       const resetElementPosition = () => {
