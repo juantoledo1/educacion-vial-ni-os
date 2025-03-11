@@ -80,9 +80,30 @@ import Layout from '../layouts/Layout.astro';
         toast.classList.add('toast', 'fade', 'show', `bg-${tipo}`);
         if (grande) toast.classList.add('toast-grande');
         toast.innerHTML = `<div class="toast-body">${mensaje}</div>`;
+
+        // Si el ancho de la ventana es menor o igual a 768px, posiciona el toast en la parte superior centrado
+        if (window.innerWidth <= 768) {
+          toast.style.position = 'fixed';
+          toast.style.top = '10px';
+          toast.style.left = '50%';
+          toast.style.transform = 'translateX(-50%)';
+          // Quitar bottom/right para evitar conflictos
+          toast.style.bottom = '';
+          toast.style.right = '';
+        } else {
+          // En pantallas grandes, lo dejamos en la posición actual (abajo centrado)
+          toast.style.position = 'fixed';
+          toast.style.bottom = '20px';
+          toast.style.left = '50%';
+          toast.style.transform = 'translateX(-50%)';
+        }
+
+        toast.style.zIndex = 1000;
         toastContainer.appendChild(toast);
+
         setTimeout(() => toast.remove(), grande ? 5000 : 3000);
       }
+
 
       function finalToast() {
         finalToastEl.classList.remove('d-none');
