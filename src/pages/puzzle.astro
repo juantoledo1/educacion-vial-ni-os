@@ -13,32 +13,16 @@ import Layout from '../layouts/Layout.astro';
       <div class="col-md-8">
         <div class="d-flex flex-column align-items-center">
           <div class="mb-4 d-flex flex-wrap justify-content-center">
-            <div
-              id="category1"
-              class="border border-3 border-success rounded p-4 mb-3 position-relative d-flex flex-column align-items-center justify-content-center shadow-lg category-box"
-              style="background-color: #4dc63b;"
-            >
+            <div id="category1" class="border border-3 border-success rounded p-4 mb-3 position-relative d-flex flex-column align-items-center justify-content-center shadow-lg category-box" style="background-color: #4dc63b;">
               <p class="text-center m-0 fw-bold">Señales de Tráfico</p>
             </div>
-            <div
-              id="category2"
-              class="border border-3 border-warning rounded p-4 mb-3 position-relative d-flex flex-column align-items-center justify-content-center shadow-lg category-box"
-              style="background-color: #efdd8c;"
-            >
+            <div id="category2" class="border border-3 border-warning rounded p-4 mb-3 position-relative d-flex flex-column align-items-center justify-content-center shadow-lg category-box" style="background-color: #efdd8c;">
               <p class="text-center m-0 fw-bold">Protección Personal</p>
             </div>
-            <div
-              id="category3"
-              class="border border-3 border-danger rounded p-4 mb-3 position-relative d-flex flex-column align-items-center justify-content-center shadow-lg category-box"
-              style="background-color: #df754b;"
-            >
+            <div id="category3" class="border border-3 border-danger rounded p-4 mb-3 position-relative d-flex flex-column align-items-center justify-content-center shadow-lg category-box" style="background-color: #df754b;">
               <p class="text-center m-0 fw-bold">Vehículos Seguros</p>
             </div>
-            <div
-              id="category4"
-              class="border border-3 border-info rounded p-4 mb-3 position-relative d-flex flex-column align-items-center justify-content-center shadow-lg category-box"
-              style="background-color: #8cb8e3;"
-            >
+            <div id="category4" class="border border-3 border-info rounded p-4 mb-3 position-relative d-flex flex-column align-items-center justify-content-center shadow-lg category-box" style="background-color: #8cb8e3;">
               <p class="text-center m-0 fw-bold">Normas Peatonales</p>
             </div>
           </div>
@@ -63,14 +47,16 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </div>
 
-
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const categories = document.querySelectorAll('.category-box'); // Modificado selector para categorías
+      const categories = document.querySelectorAll('.category-box');
       const draggableItemsContainer = document.getElementById('draggableItems');
       const resetButton = document.getElementById('resetButton');
       const toastContainer = document.getElementById('toastContainer');
       const finalToastEl = document.getElementById('finalToast');
+
+      // Variable para almacenar el contenedor resaltado actualmente (touch)
+      let currentHighlightCategory = null;
 
       // Datos del juego
       const itemsData = [
@@ -89,23 +75,15 @@ import Layout from '../layouts/Layout.astro';
       let correctItems = 0;
       let totalItems = itemsData.length;
 
-      // Función para mostrar un toast personalizado
       function mostrarToast(mensaje, tipo = 'info', grande = false) {
         const toast = document.createElement('div');
         toast.classList.add('toast', 'fade', 'show', `bg-${tipo}`);
-        if (grande) {
-          toast.classList.add('toast-grande');
-        }
-        toast.innerHTML = `
-          <div class="toast-body">
-            ${mensaje}
-          </div>
-        `;
+        if (grande) toast.classList.add('toast-grande');
+        toast.innerHTML = `<div class="toast-body">${mensaje}</div>`;
         toastContainer.appendChild(toast);
         setTimeout(() => toast.remove(), grande ? 5000 : 3000);
       }
 
-      // Función para mostrar el toast final centrado
       function finalToast() {
         finalToastEl.classList.remove('d-none');
         finalToastEl.classList.add('show');
@@ -115,92 +93,116 @@ import Layout from '../layouts/Layout.astro';
         }, 5000);
       }
 
-
-      //  ---  FUNCIONES Y VARIABLES PARA TOUCH (MÓVIL) -  **MOVIDO ARRIBA**  ---
-      let draggedElement = null; // Elemento que se está arrastrando con touch
-      let touchStartX = 0;     // Posición X inicial del toque
-      let touchStartY = 0;     // Posición Y inicial del toque
+      // Eventos touch
+      let draggedElement = null;
+      let touchStartX = 0;
+      let touchStartY = 0;
 
       const addTouchEventListeners = () => {
         document.querySelectorAll('.draggable-item').forEach(item => {
-          item.addEventListener('touchstart', handleTouchStart, { passive: false }); // Passive: false para preventDefault
-          item.addEventListener('touchmove', handleTouchMove, { passive: false });  // Passive: false para preventDefault
+          item.addEventListener('touchstart', handleTouchStart, { passive: false });
+          item.addEventListener('touchmove', handleTouchMove, { passive: false });
           item.addEventListener('touchend', handleTouchEnd);
-          item.addEventListener('touchcancel', handleTouchEnd); // Opcional: Manejar 'touchcancel'
+          item.addEventListener('touchcancel', handleTouchEnd);
         });
       };
-
 
       const handleTouchStart = (e) => {
         draggedElement = e.target.closest('.draggable-item');
         if (!draggedElement) return;
-
         const touch = e.touches[0];
         touchStartX = touch.clientX - draggedElement.getBoundingClientRect().left;
         touchStartY = touch.clientY - draggedElement.getBoundingClientRect().top;
-
-        draggedElement.style.position = 'absolute'; // Convertir a posición absoluta para moverlo libremente
-        draggedElement.style.zIndex = '1000'; // Asegurar que esté por encima de otros elementos
-        updateElementPosition(touch); // Actualizar posición inicial
+        draggedElement.style.position = 'absolute';
+        draggedElement.style.zIndex = '1000';
+        updateElementPosition(touch);
       };
 
       const handleTouchMove = (e) => {
         if (!draggedElement) return;
-        e.preventDefault(); // ¡IMPORTANTE! Prevenir scroll en pantallas táctiles
-        updateElementPosition(e.touches[0]); // Actualizar la posición al mover el dedo
+        e.preventDefault();
+        const touch = e.touches[0];
+        updateElementPosition(touch);
+        // --- Aquí se amplía la zona de detección con un offset vertical ---
+        let currentCategory = document.elementFromPoint(touch.clientX, touch.clientY + 20)?.closest('.category-box');
+        if (currentCategory !== currentHighlightCategory) {
+          if (currentHighlightCategory) {
+            currentHighlightCategory.classList.remove('category-highlight');
+          }
+          if (currentCategory) {
+            currentCategory.classList.add('category-highlight');
+          }
+          currentHighlightCategory = currentCategory;
+        }
       };
 
       const handleTouchEnd = (e) => {
         if (!draggedElement) return;
-
-        const touch = e.changedTouches[0]; // Usar changedTouches para 'touchend'
-        const category = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('.category-box');
-
-        if (category) {
-          checkTouchAnswer(category, draggedElement); // Llamar a función de verificación para touch
+        const touch = e.changedTouches[0];
+        let category = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('.category-box');
+        if (!category) {
+          category = document.elementFromPoint(touch.clientX, touch.clientY + 20)?.closest('.category-box');
         }
-
-        resetElementPosition(); // Restablecer estilos del elemento arrastrado
+        categories.forEach(cat => cat.classList.remove('category-highlight'));
+        currentHighlightCategory = null;
+        if (category) {
+          checkTouchAnswer(category, draggedElement);
+        }
+        resetElementPosition();
       };
-
 
       const updateElementPosition = (touch) => {
         const elementWidth = draggedElement.offsetWidth;
         const elementHeight = draggedElement.offsetHeight;
-        const scrollY = window.scrollY; // ¡NUEVO! Obtener la posición vertical del scroll
-
+        const scrollY = window.scrollY;
         draggedElement.style.left = `${touch.clientX - touchStartX - (elementWidth / 2.5)}px`;
-        draggedElement.style.top = `${touch.clientY - touchStartY - (elementHeight / 2.5) + scrollY}px`; // ¡RESTAMOS scrollY AQUÍ!
+        draggedElement.style.top = `${touch.clientY - touchStartY - (elementHeight / 2.5) + scrollY}px`;
       };
 
       const resetElementPosition = () => {
-        if (draggedElement) { // Verificar si draggedElement existe antes de manipularlo
-          draggedElement.style.position = 'static'; // Volver a posición estática
-          draggedElement.style.zIndex = 'auto';    // Volver al z-index automático
-          draggedElement = null;                   // Limpiar la variable draggedElement
+        if (draggedElement) {
+          draggedElement.style.position = 'static';
+          draggedElement.style.zIndex = 'auto';
+          draggedElement = null;
         }
       };
 
-
       const checkTouchAnswer = (category, element) => {
         const correctCategory = itemsData.find(item => item.id === element.id)?.category;
-
         if (correctCategory === category.id) {
-          element.remove(); // <-- ¡AHORA USAMOS element.remove() EN TOUCH, IGUAL QUE EN ESCRITORIO!
+          element.remove();
           correctItems++;
           mostrarToast('¡Correcto! Elemento colocado. 🎉', 'success');
           if (correctItems === totalItems) {
             setTimeout(finalToast, 500);
           }
         } else {
-          element.classList.add('shake'); // Animación de shake si es incorrecto
+          element.classList.add('shake');
           setTimeout(() => element.classList.remove('shake'), 500);
           mostrarToast('Elemento incorrecto. ¡Inténtalo de nuevo! ❌', 'danger');
         }
       };
 
+      function addDesktopDragListeners() {
+        document.querySelectorAll('.draggable-item').forEach(item => {
+          item.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', item.id);
+            item.classList.add('opacity-50');
+          });
+          item.addEventListener('dragend', () => {
+            item.classList.remove('opacity-50');
+          });
+        });
+        categories.forEach(category => {
+          category.addEventListener('dragenter', () => {
+            category.classList.add('category-highlight');
+          });
+          category.addEventListener('dragleave', () => {
+            category.classList.remove('category-highlight');
+          });
+        });
+      }
 
-      // Inicializa el juego - **DESPUÉS de las funciones de touch**
       function initializeGame() {
         correctItems = 0;
         const shuffledItems = [...itemsData].sort(() => Math.random() - 0.5);
@@ -210,9 +212,8 @@ import Layout from '../layouts/Layout.astro';
           const div = document.createElement('div');
           div.id = item.id;
           div.className = 'draggable-item rounded shadow-sm text-center';
-          div.draggable = true; // Importante mantener draggable=true para desktop drag
+          div.draggable = true;
           div.style.width = '80px';
-          div.style.maxWidth = '100%';
           div.style.cursor = 'grab';
           div.innerHTML = `
             <img src="${item.image}" alt="${item.label}" onerror="this.src='/assets/images/placeholder.jpg'; this.alt='Imagen no disponible'" style="width: 100%; height: 80px; object-fit: cover;" />
@@ -221,43 +222,25 @@ import Layout from '../layouts/Layout.astro';
           draggableItemsContainer.appendChild(div);
         });
 
-        document.querySelectorAll('.draggable-item').forEach((item) => {
-          //  ---  EVENTOS PARA DESKTOP (DRAG AND DROP CON RATÓN)  ---
-          item.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', item.id); // @ts-ignore
-            item.classList.add('opacity-50');
-          });
-          item.addEventListener('dragend', () => {
-            item.classList.remove('opacity-50');
-          });
-        });
-
+        addDesktopDragListeners();
         mostrarToast('¡El juego ha comenzado! Arrastra los elementos a la categoría correcta.', 'info');
-
-        //  ---  AÑADIR EVENT LISTENERS TÁCTILES  ---
-        addTouchEventListeners(); // Llamar a la función para añadir listeners táctiles
+        addTouchEventListeners();
       }
 
-      initializeGame(); // Llamar a initializeGame DESPUÉS de definirla y DESPUÉS de las funciones de touch
+      initializeGame();
 
-      // Eventos para las áreas de drop (categorías) - SIN CAMBIOS
       categories.forEach((category) => {
         category.addEventListener('dragover', (e) => e.preventDefault());
         category.addEventListener('drop', (e) => {
           e.preventDefault();
           const itemId = e.dataTransfer.getData('text/plain');
           const item = document.getElementById(itemId);
-          const correctCategory = itemsData.find((data) => data.id === itemId)?.category;
+          const correctCategory = itemsData.find(data => data.id === itemId)?.category;
           if (correctCategory === category.id) {
-            // Remover el elemento del contenedor original para que desaparezca
-            if (item) {
-              item.remove();
-            }
+            if (item) item.remove();
             correctItems++;
             mostrarToast('¡Correcto! Elemento colocado. 🎉', 'success');
-            if (correctItems === totalItems) {
-              setTimeout(finalToast, 500);
-            }
+            if (correctItems === totalItems) setTimeout(finalToast, 500);
           } else {
             mostrarToast('Elemento incorrecto. ¡Inténtalo de nuevo! ❌', 'danger');
           }
@@ -267,168 +250,159 @@ import Layout from '../layouts/Layout.astro';
       resetButton.addEventListener('click', () => {
         initializeGame();
       });
-
-
     });
   </script>
 
-<style>
-  /* Contenedores principales */
-  .game-container {
-    max-width: 100%;
-    overflow: hidden;
-  }
-
-  /* Scroll horizontal */
-  .categories-scroll,
-  .items-scroll {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 10px;
-    margin: 1rem 0;
-  }
-
-  /* Categorías */
-  .category-box {
-    width: 200px; /* Ancho fijo para escritorio - como en tu CSS */
-    height: 150px; /* Alto fijo para escritorio - como en tu CSS */
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    padding: 1rem;
-    background: #f8f9fa;
-  }
-
-  .category-title {
-    font-weight: 700;
-    margin: 0;
-    text-align: center;
-    font-size: 1rem;
-  }
-
-  /* Elementos arrastrables - Tamaños basados en tu CSS, AHORA MEJORADOS *** */
-  .draggable-item {
-    cursor: grab;
-    width: 90px; /* Ancho ligeramente reducido a 90px desde 100px para mejor proporción *** */
-    height: 100px; /* Alto fijo para escritorio - Ajustado para que sea ligeramente más alto que ancho *** */
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    padding: 0.2rem; /* Padding reducido a 0.2rem para compensar el tamaño total *** */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    flex-shrink: 0;
-    touch-action: none; /* Añadido:  Para evitar problemas de "touch" y "drag" simultáneos */
-  }
-
-  .draggable-item img {
-    width: 100%;       /* Ancho de la imagen al 100% del contenedor *** */
-    height: 60px;      /* Altura FIJA de la imagen a 60px - CLAVE para controlar el tamaño *** */
-    object-fit: contain; /* Ajuste de imagen 'contain' para no recortar *** */
-    margin-bottom: 0.3rem; /* Margen inferior de la imagen *** */
-    display: block;     /* Añadido: Asegura que la imagen se comporte como bloque *** */
-  }
-
-  .draggable-item p {
-    font-size: 0.75rem;
-    text-align: center;
-    margin: 0;
-    color: #6c757d;
-    line-height: 1.2;
-  }
-
-  /* Toasts - Sin cambios, mantenemos tus estilos de toast */
-  .toast {
-    min-width: 200px;
-    max-width: 300px;
-    z-index: 1050;
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    color: white;
-    font-size: 0.9rem;
-  }
-  .toast .toast-body {
-    font-size: 1rem;
-    color: #fff;
-  }
-  .toast.success { background: #28a745 !important; }
-  .toast.info { background: #17a2b8 !important; } /* Añadido info para consistencia */
-  .toast.danger { background: #dc3545 !important; }
-  .toast.warning { background: #ffc107 !important; }
-  .toast-grande .toast-body {
-    font-size: 1.5rem;
-  }
-
-  .final-toast { /* Sin cambios */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1100;
-    min-width: 300px;
-    text-align: center;
-    background-color: #28a745 !important;
-    color: #fff !important;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    font-size: 1.5rem;
-  }
-
-  /* Animaciones - Sin cambios */
-  .shake {
-    animation: shake 0.5s;
-  }
-
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-8px); }
-    75% { transform: translateX(8px); }
-  }
-
-  /* Distribución responsiva para las cartas (elementos arrastrables) - AHORA MEJORADA *** */
-  @media (max-width: 768px) {
-    .draggable-item {
-      width: 70px;  /* Ancho móvil reducido a 70px desde 80px para ser más pequeño en móvil *** */
-      height: 80px; /* Alto móvil ajustado a 80px para mantener una proporción vertical en móvil *** */
+  <style>
+    /* Efecto de highlight para contenedores */
+    .category-highlight {
+      box-shadow: 0 0 12px 4px rgba(0, 123, 255, 0.7);
+      transform: scale(1.05);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-     .draggable-item img {
-      height: 50px; /* Altura FIJA de la imagen móvil a 50px - CLAVE para control en móvil *** */
+    /* Contenedores principales */
+    .game-container {
+      max-width: 100%;
+      overflow: hidden;
     }
+    /* Scroll horizontal */
+    .categories-scroll,
+    .items-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 10px;
+      margin: 1rem 0;
+    }
+    /* Categorías */
     .category-box {
-      width: 150px;
-      height: 120px;
+      width: 200px;
+      height: 150px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
       padding: 1rem;
+      background: #f8f9fa;
     }
-    .category-box p {
-      font-size: 0.9rem;
+    .category-title {
+      font-weight: 700;
+      margin: 0;
+      text-align: center;
+      font-size: 1rem;
     }
-  }
-
-  @media (max-width: 480px) {
+    /* Elementos arrastrables */
     .draggable-item {
-      width: 60px; /* Ancho móvil aún más pequeño a 60px *** */
-      height: 70px; /* Alto móvil aún más pequeño y más vertical a 70px *** */
-    }
-     .draggable-item img {
-      height: 40px; /* Altura FIJA de la imagen en móvil pequeño a 40px - Control aún más pequeño *** */
-    }
-    .category-box { /* Sin cambios en category-box para móvil pequeño, si quieres reducir más, ajusta aquí */
-      width: 130px;
+      cursor: grab;
+      width: 90px;
       height: 100px;
-      padding: 0.6rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      padding: 0.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      flex-shrink: 0;
+      touch-action: none;
     }
-    .category-box p {
+    .draggable-item img {
+      width: 100%;
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+    .draggable-item p {
+      font-size: 0.75rem;
+      text-align: center;
+      margin: 0;
+      color: #6c757d;
+      line-height: 1.2;
+    }
+    /* Toasts */
+    .toast {
+      min-width: 200px;
+      max-width: 300px;
+      z-index: 1050;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      color: white;
       font-size: 0.9rem;
     }
-  } 
-    
-</style>
+    .toast .toast-body {
+      font-size: 1rem;
+      color: #fff;
+    }
+    .toast.success { background: #28a745 !important; }
+    .toast.info { background: #17a2b8 !important; }
+    .toast.danger { background: #dc3545 !important; }
+    .toast.warning { background: #ffc107 !important; }
+    .toast-grande .toast-body {
+      font-size: 1.5rem;
+    }
+    .final-toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1100;
+      min-width: 300px;
+      text-align: center;
+      background-color: #28a745 !important;
+      color: #fff !important;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-size: 1.5rem;
+    }
+    /* Animaciones */
+    .shake {
+      animation: shake 0.5s;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+    /* Responsividad para móviles */
+    @media (max-width: 768px) {
+      .draggable-item {
+        width: 70px;
+        height: 80px;
+      }
+      .draggable-item img {
+        height: 50px;
+      }
+      .category-box {
+        width: 150px;
+        height: 120px;
+        padding: 1rem;
+      }
+      .category-box p {
+        font-size: 0.9rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .draggable-item {
+        width: 60px;
+        height: 70px;
+      }
+      .draggable-item img {
+        height: 40px;
+      }
+      .category-box {
+        width: 130px;
+        height: 100px;
+        padding: 0.6rem;
+      }
+      .category-box p {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
 </Layout>
