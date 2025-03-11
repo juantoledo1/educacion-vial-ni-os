@@ -48,6 +48,22 @@ import Layout from '../layouts/Layout.astro';
             <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="toast"></button>
           </div>
         `;
+        if (window.innerWidth <= 768) {
+          // Posición centrada en la parte superior
+          toast.style.position = 'fixed';
+          toast.style.top = '10px';
+          toast.style.left = '50%';
+          toast.style.transform = 'translateX(-50%)';
+          // Quitar propiedades de bottom/right
+          toast.style.bottom = '';
+          toast.style.right = '';
+        } else {
+          // Para pantallas grandes, posición por defecto (abajo a la derecha)
+          toast.style.position = 'fixed';
+          toast.style.bottom = '20px';
+          toast.style.right = '20px';
+          toast.style.transform = '';
+        }
         toastContainer.appendChild(toast);
         setTimeout(() => toast.remove(), grande ? 5000 : 3000);
       }
