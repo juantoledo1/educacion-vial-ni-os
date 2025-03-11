@@ -124,7 +124,7 @@ import Layout from '../layouts/Layout.astro';
         const touch = e.touches[0];
         updateElementPosition(touch);
         // --- Aquí se amplía la zona de detección con un offset vertical ---
-        let currentCategory = document.elementFromPoint(touch.clientX, touch.clientY + 30)?.closest('.category-box');
+        let currentCategory = document.elementFromPoint(touch.clientX, touch.clientY + 35)?.closest('.category-box');
         if (currentCategory !== currentHighlightCategory) {
           if (currentHighlightCategory) {
             currentHighlightCategory.classList.remove('category-highlight');
@@ -257,8 +257,8 @@ import Layout from '../layouts/Layout.astro';
     /* Efecto de highlight para contenedores */
     .category-highlight {
       box-shadow: 0 0 15px 6px rgba(0, 123, 255, 0.7);
-      transform: scale(1.30);
-      transition: transform 0.5s, box-shadow 0.5s;
+      transform: scale(1.06);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
     /* Contenedores principales */
     .game-container {
